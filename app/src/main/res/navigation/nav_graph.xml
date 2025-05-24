@@ -8,10 +8,19 @@
 
     <fragment
         android:id="@+id/MainScreenFragment"
+        android:name="com.materialdesign.weatherapp.MainScreenFragment"
         android:label="MainScreen"
         tools:layout="@layout/fragment_main_screen">
 
+        <action
+            android:id="@+id/action_main_to_week"
+            app:destination="@id/conditionWeekFragment" />
     </fragment>
 
+    <fragment
+        android:id="@+id/conditionWeekFragment"
+        android:name="com.materialdesign.weatherapp.ConditionWeek"
+        android:label="Weekly Forecast"
+        tools:layout="@layout/fragment_condition_week" />
 
 </navigation>

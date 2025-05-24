@@ -35,11 +35,20 @@ class MainScreenFragment : Fragment() {
         weatherApiService = RetrofitClient.instance.create(WeatherApiService::class.java)
 
         goToListButton.setOnClickListener {
-            // findNavController().navigate(R.id.nextFragment) // doğru fragment ekleyince aç
-            Toast.makeText(context, "Next page not implemented yet", Toast.LENGTH_SHORT).show()
+            try {
+                // Navigation aktif hale getirildi
+                findNavController().navigate(R.id.action_main_to_week)
+            } catch (e: Exception) {
+                Toast.makeText(context, "Navigation error: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
         }
 
-        fetchWeatherData("Istanbul")
+        // API çağrısını güvenli hale getirelim
+        try {
+            fetchWeatherData("Istanbul")
+        } catch (e: Exception) {
+            showError("Initialization error: ${e.message}")
+        }
 
         return view
     }
