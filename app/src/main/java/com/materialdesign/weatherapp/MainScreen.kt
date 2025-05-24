@@ -1,19 +1,22 @@
 package com.materialdesign.weatherapp
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
+import com.google.android.material.button.MaterialButton
 import kotlinx.coroutines.launch
 
-class MainScreen : Fragment() {
+class MainScreenFragment : Fragment() {
 
     private lateinit var locationTextView: TextView
     private lateinit var weatherTextView: TextView
+    private lateinit var goToListButton: MaterialButton
     private lateinit var weatherApiService: WeatherApiService
 
     private val API_KEY = "ba936bca0b46404a9fe122638252405"
@@ -27,8 +30,14 @@ class MainScreen : Fragment() {
 
         locationTextView = view.findViewById(R.id.locationTextView)
         weatherTextView = view.findViewById(R.id.weatherTextView)
+        goToListButton = view.findViewById(R.id.goToListButton)
 
         weatherApiService = RetrofitClient.instance.create(WeatherApiService::class.java)
+
+        goToListButton.setOnClickListener {
+            // findNavController().navigate(R.id.nextFragment) // doğru fragment ekleyince aç
+            Toast.makeText(context, "Next page not implemented yet", Toast.LENGTH_SHORT).show()
+        }
 
         fetchWeatherData("Istanbul")
 
