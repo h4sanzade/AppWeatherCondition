@@ -7,37 +7,71 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".mainScreen">
 
+    <ImageView
+        android:id="@+id/cloudImageView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:src="@drawable/img_cloud"
+        android:scaleType="centerCrop"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/goToListButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintVertical_bias="0.0"
+        android:layout_marginBottom="80dp" />
 
-<ImageView
-    android:layout_width="0dp"
-    android:layout_height="wrap_content"
-    android:src="@drawable/img_cloud"
-    app:layout_constraintTop_toTopOf="parent"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent">
+    <TextView
+        android:id="@+id/locationTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="İstanbul, Türkiye"
+        android:textSize="28sp"
+        android:textColor="@android:color/white"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:shadowColor="@android:color/black"
+        android:shadowDx="2"
+        android:shadowDy="2"
+        android:shadowRadius="4"
+        app:layout_constraintTop_toTopOf="@id/cloudImageView"
+        app:layout_constraintStart_toStartOf="@id/cloudImageView"
+        app:layout_constraintEnd_toEndOf="@id/cloudImageView"
+        app:layout_constraintBottom_toTopOf="@id/weatherTextView"
+        app:layout_constraintVertical_chainStyle="packed"
+        android:layout_marginBottom="16dp" />
 
-</ImageView>
+    <!-- Weather Text - Image üzerinde -->
+    <TextView
+        android:id="@+id/weatherTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="25°C\nParlty Cloudy"
+        android:textSize="24sp"
+        android:textColor="@android:color/white"
+        android:gravity="center"
+        android:lineSpacingExtra="8dp"
+        android:shadowColor="@android:color/black"
+        android:shadowDx="2"
+        android:shadowDy="2"
+        android:shadowRadius="4"
+        app:layout_constraintTop_toBottomOf="@id/locationTextView"
+        app:layout_constraintStart_toStartOf="@id/cloudImageView"
+        app:layout_constraintEnd_toEndOf="@id/cloudImageView"
+        app:layout_constraintBottom_toBottomOf="@id/cloudImageView" />
 
-
-
-
-<com.google.android.material.button.MaterialButton
-    android:layout_width="0dp"
-    android:layout_height="wrap_content"
-    app:layout_constraintBottom_toBottomOf="parent"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
-    android:layout_marginEnd="50dp"
-    android:layout_marginStart="50dp"
-    app:cornerRadius="10dp"
-    android:backgroundTint="#A5A6F6"
-    android:text="@string/go_to_list"
-    android:textColor="@color/black"
-    android:layout_marginBottom="20dp">
-
-</com.google.android.material.button.MaterialButton>
-
-
-
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/goToListButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginEnd="50dp"
+        android:layout_marginStart="50dp"
+        app:cornerRadius="10dp"
+        android:backgroundTint="#A5A6F6"
+        android:text="@string/go_to_list"
+        android:textColor="@color/black"
+        android:layout_marginBottom="20dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
