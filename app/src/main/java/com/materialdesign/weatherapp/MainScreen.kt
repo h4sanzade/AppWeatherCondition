@@ -43,9 +43,9 @@ class MainScreenFragment : Fragment() {
             }
         }
 
-        // API çağrısını güvenli hale getirelim
+        // API çağrısını Bakü için güvenli hale getirelim
         try {
-            fetchWeatherData("Istanbul")
+            fetchWeatherData("Baku")
         } catch (e: Exception) {
             showError("Initialization error: ${e.message}")
         }

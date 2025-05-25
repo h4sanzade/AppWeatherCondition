@@ -17,7 +17,7 @@
             android:shadowDx="2"
             android:shadowDy="2"
             android:shadowRadius="4"
-            android:text="İstanbul, Türkiye"
+            android:text="Baku, Azerbaijan"
             android:textColor="@android:color/white"
             android:textSize="28sp"
             android:textStyle="bold"
