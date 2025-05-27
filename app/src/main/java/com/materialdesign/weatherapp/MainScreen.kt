@@ -36,14 +36,14 @@ class MainScreenFragment : Fragment() {
 
         goToListButton.setOnClickListener {
             try {
-                // Navigation aktif hale getirildi
+
                 findNavController().navigate(R.id.action_main_to_week)
             } catch (e: Exception) {
                 Toast.makeText(context, "Navigation error: ${e.message}", Toast.LENGTH_SHORT).show()
             }
         }
 
-        // API çağrısını Bakü için güvenli hale getirelim
+
         try {
             fetchWeatherData("Baku")
         } catch (e: Exception) {

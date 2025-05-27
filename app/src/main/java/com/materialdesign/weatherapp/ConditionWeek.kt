@@ -36,7 +36,7 @@ class ConditionWeek : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_condition_week, container, false)
 
-        // Initialize views
+
         locationTextView = view.findViewById(R.id.locationTextView)
         weatherTextView = view.findViewById(R.id.weatherTextView)
         tempToday = view.findViewById(R.id.tempToday)
