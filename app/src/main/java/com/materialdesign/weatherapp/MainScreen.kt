@@ -4,62 +4,59 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import com.google.android.material.button.MaterialButton
-import kotlinx.coroutines.launch
+import com.materialdesign.weatherapp.databinding.FragmentMainScreenBinding
 
 class MainScreenFragment : Fragment() {
 
-    private lateinit var locationTextView: TextView
-    private lateinit var weatherTextView: TextView
-    private lateinit var goToListButton: MaterialButton
-    private lateinit var weatherApiService: WeatherApiService
+    private var _binding: FragmentMainScreenBinding? = null
+    private val binding get() = _binding!!
 
-    private val API_KEY = "ba936bca0b46404a9fe122638252405"
+    private val viewModel: WeatherViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        val view = inflater.inflate(R.layout.fragment_main_screen, container, false)
+    ): View {
+        _binding = FragmentMainScreenBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
-        locationTextView = view.findViewById(R.id.locationTextView)
-        weatherTextView = view.findViewById(R.id.weatherTextView)
-        goToListButton = view.findViewById(R.id.goToListButton)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        weatherApiService = RetrofitClient.instance.create(WeatherApiService::class.java)
+        setupClickListeners()
+        observeViewModel()
 
-        goToListButton.setOnClickListener {
+        viewModel.fetchCurrentWeather("Baku")
+    }
+
+    private fun setupClickListeners() {
+        binding.goToListButton.setOnClickListener {
             try {
-
                 findNavController().navigate(R.id.action_main_to_week)
             } catch (e: Exception) {
                 Toast.makeText(context, "Navigation error: ${e.message}", Toast.LENGTH_SHORT).show()
             }
         }
-
-
-        try {
-            fetchWeatherData("Baku")
-        } catch (e: Exception) {
-            showError("Initialization error: ${e.message}")
-        }
-
-        return view
     }
 
-    private fun fetchWeatherData(location: String) {
-        lifecycleScope.launch {
-            try {
-                val response = weatherApiService.getCurrentWeather(API_KEY, location)
-                updateUI(response)
-            } catch (e: Exception) {
-                showError("Failed to get weather data: ${e.message}")
+    private fun observeViewModel() {
+        viewModel.currentWeather.observe(viewLifecycleOwner) { weatherResponse ->
+            updateUI(weatherResponse)
+        }
+
+        viewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
+            binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+        }
+
+        viewModel.error.observe(viewLifecycleOwner) { error ->
+            if (error.isNotEmpty()) {
+                showError(error)
             }
         }
     }
@@ -68,13 +65,18 @@ class MainScreenFragment : Fragment() {
         val locationText = "${weatherResponse.location.name}, ${weatherResponse.location.country}"
         val weatherText = "${weatherResponse.current.temp_c.toInt()}°C\n${weatherResponse.current.condition.text}"
 
-        locationTextView.text = locationText
-        weatherTextView.text = weatherText
+        binding.locationTextView.text = locationText
+        binding.weatherTextView.text = weatherText
     }
 
     private fun showError(message: String) {
         Toast.makeText(context, message, Toast.LENGTH_LONG).show()
-        locationTextView.text = "Location Not Found"
-        weatherTextView.text = "No Data"
+        binding.locationTextView.text = "Location Not Found"
+        binding.weatherTextView.text = "No Data"
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }
