@@ -68,15 +68,18 @@ class ConditionWeekFragment : Fragment() {
     private fun updateCurrentWeatherUI(weatherResponse: WeatherResponse) {
         val locationText = "${weatherResponse.location.name}, ${weatherResponse.location.country}"
         val weatherText = "${weatherResponse.current.temp_c.toInt()}°C\n${weatherResponse.current.condition.text}"
+        val todayTemp = "${weatherResponse.current.temp_c.toInt()}°C"
 
         binding.locationTextView.text = locationText
         binding.weatherTextView.text = weatherText
+        binding.todayTemp.text = todayTemp
     }
 
     private fun showError(message: String) {
         Toast.makeText(context, message, Toast.LENGTH_LONG).show()
         binding.locationTextView.text = "Location Not Found"
         binding.weatherTextView.text = "No Data"
+        binding.todayTemp.text = "N/A"
     }
 
     override fun onDestroyView() {

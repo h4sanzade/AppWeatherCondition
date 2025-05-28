@@ -42,7 +42,8 @@ class WeatherViewModel : ViewModel() {
             _isLoading.value = true
             try {
                 val response = weatherApiService.getForecastWeather(API_KEY, location, 10)
-                _forecastWeather.value = response.forecast.forecastday.drop(1).take(9)
+
+                _forecastWeather.value = response.forecast.forecastday.drop(1)
                 _error.value = ""
             } catch (e: Exception) {
                 _error.value = "Failed to get forecast data: ${e.message}"

@@ -29,10 +29,10 @@ class ForecastAdapter : ListAdapter<ForecastDay, ForecastAdapter.ForecastViewHol
 
         fun bind(forecastDay: ForecastDay) {
             val dayName = getDayName(forecastDay.date)
-            val avgTemp = ((forecastDay.day.maxtemp_c + forecastDay.day.mintemp_c) / 2).toInt()
+            val tempRange = "${forecastDay.day.maxtemp_c.toInt()}°/${forecastDay.day.mintemp_c.toInt()}°C"
 
             binding.textDay.text = dayName
-            binding.textTemp.text = "${avgTemp}°C"
+            binding.textTemp.text = tempRange
         }
 
         private fun getDayName(dateString: String): String {

@@ -19,7 +19,7 @@
 
     <fragment
         android:id="@+id/conditionWeekFragment"
-        android:name="com.materialdesign.weatherapp.ConditionWeek"
+        android:name="com.materialdesign.weatherapp.ConditionWeekFragment"
         android:label="Weekly Forecast"
         tools:layout="@layout/fragment_condition_week" />
 
