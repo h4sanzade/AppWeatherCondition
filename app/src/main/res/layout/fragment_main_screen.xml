@@ -6,7 +6,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".MainScreenFragment">
 
-    <!-- Search Container -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/searchContainer"
         android:layout_width="0dp"
@@ -26,6 +25,7 @@
             android:layout_height="48dp"
             android:background="@android:color/transparent"
             android:hint="Search location..."
+            android:fontFamily="@font/poppins_regular"
             android:textColorHint="#80FFFFFF"
             android:textColor="@android:color/white"
             android:paddingStart="16dp"
@@ -56,14 +56,13 @@
             android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@drawable/ic_search"
             android:contentDescription="Search"
-            android:tint="@android:color/white"
+            android:tint="@color/white"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <!-- Search Suggestions Container -->
     <androidx.cardview.widget.CardView
         android:id="@+id/suggestionsContainer"
         android:layout_width="0dp"
@@ -117,6 +116,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Baku, Azerbaijan"
+            android:fontFamily="@font/poppins_bold"
             android:textSize="28sp"
             android:textColor="@android:color/white"
             android:textStyle="bold"
@@ -150,6 +150,7 @@
             android:textSize="24sp"
             android:textColor="@android:color/white"
             android:gravity="center"
+            android:fontFamily="@font/poppins_regular"
             android:lineSpacingExtra="8dp"
             android:shadowColor="@android:color/black"
             android:shadowDx="2"
@@ -169,12 +170,14 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginEnd="50dp"
-        android:layout_marginStart="50dp"
+        android:layout_marginEnd="40dp"
+        android:layout_marginStart="40dp"
+        android:textSize="14sp"
         app:cornerRadius="10dp"
-        android:backgroundTint="#A5A6F6"
+        android:backgroundTint="@color/button_background"
         android:text="@string/go_to_list"
-        android:textColor="@color/black"
+        android:fontFamily="@font/poppins_bold"
+        android:textColor="@color/white"
         android:layout_marginBottom="20dp" />
 
     <ProgressBar

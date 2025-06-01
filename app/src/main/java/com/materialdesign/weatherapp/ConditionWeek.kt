@@ -79,12 +79,10 @@ class ConditionWeekFragment : Fragment() {
         binding.weatherTextView.text = weatherText
         binding.todayTemp.text = todayTemp
 
-        // Load weather icon
         loadWeatherIcon(weatherResponse.current.condition.icon)
     }
 
     private fun loadWeatherIcon(iconUrl: String) {
-        // Weather API returns icons in format: //cdn.weatherapi.com/weather/64x64/day/116.png
         val fullIconUrl = if (iconUrl.startsWith("//")) {
             "https:$iconUrl"
         } else {

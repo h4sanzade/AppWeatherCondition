@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
 import com.materialdesign.weatherapp.databinding.FragmentMainScreenBinding
 
 class MainScreenFragment : Fragment() {
@@ -40,13 +41,11 @@ class MainScreenFragment : Fragment() {
         setupSearchFunctionality()
         observeViewModel()
 
-
         viewModel.fetchCurrentWeather(currentLocation)
     }
 
     private fun setupSearchSuggestionsList() {
         suggestionsAdapter = SearchSuggestionsAdapter { suggestion ->
-
             currentLocation = suggestion.name
             binding.searchEditText.setText(suggestion.getDisplayText())
             binding.searchEditText.clearFocus()
@@ -93,12 +92,10 @@ class MainScreenFragment : Fragment() {
             }
         }
 
-
         binding.searchEditText.setOnEditorActionListener { _, _, _ ->
             binding.searchButton.performClick()
             true
         }
-
 
         binding.searchEditText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -174,13 +171,30 @@ class MainScreenFragment : Fragment() {
         binding.locationTextView.text = locationText
         binding.weatherTextView.text = weatherText
 
+        loadWeatherIcon(weatherResponse.current.condition.icon)
+
         currentLocation = weatherResponse.location.name
+    }
+
+    private fun loadWeatherIcon(iconUrl: String) {
+        val fullIconUrl = if (iconUrl.startsWith("//")) {
+            "https:$iconUrl"
+        } else {
+            iconUrl
+        }
+
+        Glide.with(this)
+            .load(fullIconUrl)
+            .placeholder(R.drawable.ic_cloud_placeholder)
+            .error(R.drawable.ic_cloud_placeholder)
+            .into(binding.weatherIconImageView)
     }
 
     private fun showError(message: String) {
         Toast.makeText(context, message, Toast.LENGTH_LONG).show()
         binding.locationTextView.text = "Location Not Found"
         binding.weatherTextView.text = "No Data"
+        binding.weatherIconImageView.setImageDrawable(null)
     }
 
     override fun onDestroyView() {

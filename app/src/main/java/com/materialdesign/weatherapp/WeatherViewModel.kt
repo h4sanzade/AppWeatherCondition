@@ -8,6 +8,8 @@ import com.materialdesign.weatherapp.SearchSuggestion.SearchSuggestion
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
+import java.io.IOException
 
 class WeatherViewModel : ViewModel() {
     private val weatherApiService = RetrofitClient.instance.create(WeatherApiService::class.java)
@@ -40,8 +42,17 @@ class WeatherViewModel : ViewModel() {
             try {
                 val response = weatherApiService.getCurrentWeather(API_KEY, location)
                 _currentWeather.value = response
+            } catch (e: HttpException) {
+                when (e.code()) {
+                    400 -> _error.value = "Location not found. Please check the city name."
+                    401 -> _error.value = "API key is invalid."
+                    403 -> _error.value = "API key has exceeded calls per month quota."
+                    else -> _error.value = "Failed to get weather data: ${e.message()}"
+                }
+            } catch (e: IOException) {
+                _error.value = "Network error. Please check your internet connection."
             } catch (e: Exception) {
-                _error.value = "Failed to get weather data: ${e.message}"
+                _error.value = "An unexpected error occurred: ${e.message}"
             } finally {
                 _isLoading.value = false
             }
@@ -54,9 +65,19 @@ class WeatherViewModel : ViewModel() {
             _error.value = ""
             try {
                 val response = weatherApiService.getForecastWeather(API_KEY, location, 10)
+
                 _forecastWeather.value = response.forecast.forecastday.drop(1)
+            } catch (e: HttpException) {
+                when (e.code()) {
+                    400 -> _error.value = "Location not found for forecast data."
+                    401 -> _error.value = "API key is invalid."
+                    403 -> _error.value = "API key has exceeded calls per month quota."
+                    else -> _error.value = "Failed to get forecast data: ${e.message()}"
+                }
+            } catch (e: IOException) {
+                _error.value = "Network error. Please check your internet connection."
             } catch (e: Exception) {
-                _error.value = "Failed to get forecast data: ${e.message}"
+                _error.value = "An unexpected error occurred while getting forecast: ${e.message}"
             } finally {
                 _isLoading.value = false
             }
@@ -64,7 +85,7 @@ class WeatherViewModel : ViewModel() {
     }
 
     fun searchLocations(query: String) {
-        // Cancel previous search job
+
         searchJob?.cancel()
 
         if (query.length < 2) {
@@ -74,16 +95,21 @@ class WeatherViewModel : ViewModel() {
 
         searchJob = viewModelScope.launch {
             try {
-                // Add delay to avoid too many API calls
+
                 delay(300)
 
                 _isSearching.value = true
                 val suggestions = weatherApiService.searchLocations(API_KEY, query)
-                _searchSuggestions.value = suggestions
-            } catch (e: Exception) {
-                // Don't show error for search, just clear suggestions
+                _searchSuggestions.value = suggestions.take(5)
+            } catch (e: HttpException) {
                 _searchSuggestions.value = emptyList()
-                println("Search error: ${e.message}") // For debugging
+                println("Search HTTP error: ${e.code()} - ${e.message()}")
+            } catch (e: IOException) {
+                _searchSuggestions.value = emptyList()
+                println("Search network error: ${e.message}")
+            } catch (e: Exception) {
+                _searchSuggestions.value = emptyList()
+                println("Search error: ${e.message}")
             } finally {
                 _isSearching.value = false
             }
@@ -94,5 +120,9 @@ class WeatherViewModel : ViewModel() {
         _searchSuggestions.value = emptyList()
         searchJob?.cancel()
         _isSearching.value = false
+    }
+
+    fun clearError() {
+        _error.value = ""
     }
 }
