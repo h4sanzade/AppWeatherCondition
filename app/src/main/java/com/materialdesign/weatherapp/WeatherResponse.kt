@@ -16,7 +16,8 @@ data class CurrentWeather(
 )
 
 data class WeatherCondition(
-    val text: String
+    val text: String,
+    val icon: String
 )
 
 data class ForecastResponse(

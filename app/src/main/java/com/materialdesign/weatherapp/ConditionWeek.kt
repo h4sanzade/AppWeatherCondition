@@ -5,9 +5,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
 import com.materialdesign.weatherapp.databinding.FragmentConditionWeekBinding
 
 class ConditionWeekFragment : Fragment() {
@@ -31,12 +33,10 @@ class ConditionWeekFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
         currentLocation = arguments?.getString("location") ?: "Baku"
 
         setupRecyclerView()
         observeViewModel()
-
 
         viewModel.fetchCurrentWeather(currentLocation)
         viewModel.fetchForecastWeather(currentLocation)
@@ -60,7 +60,7 @@ class ConditionWeekFragment : Fragment() {
         }
 
         viewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
-            binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+            binding.progressBar.isVisible = isLoading
         }
 
         viewModel.error.observe(viewLifecycleOwner) { error ->
@@ -78,6 +78,24 @@ class ConditionWeekFragment : Fragment() {
         binding.locationTextView.text = locationText
         binding.weatherTextView.text = weatherText
         binding.todayTemp.text = todayTemp
+
+        // Load weather icon
+        loadWeatherIcon(weatherResponse.current.condition.icon)
+    }
+
+    private fun loadWeatherIcon(iconUrl: String) {
+        // Weather API returns icons in format: //cdn.weatherapi.com/weather/64x64/day/116.png
+        val fullIconUrl = if (iconUrl.startsWith("//")) {
+            "https:$iconUrl"
+        } else {
+            iconUrl
+        }
+
+        Glide.with(this)
+            .load(fullIconUrl)
+            .placeholder(R.drawable.ic_cloud_placeholder)
+            .error(R.drawable.ic_cloud_placeholder)
+            .into(binding.weatherIconImageView)
     }
 
     private fun showError(message: String) {
@@ -85,6 +103,7 @@ class ConditionWeekFragment : Fragment() {
         binding.locationTextView.text = "Location Not Found"
         binding.weatherTextView.text = "No Data"
         binding.todayTemp.text = "N/A"
+        binding.weatherIconImageView.setImageDrawable(null)
     }
 
     override fun onDestroyView() {

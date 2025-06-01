@@ -36,10 +36,10 @@ class WeatherViewModel : ViewModel() {
     fun fetchCurrentWeather(location: String) {
         viewModelScope.launch {
             _isLoading.value = true
+            _error.value = ""
             try {
                 val response = weatherApiService.getCurrentWeather(API_KEY, location)
                 _currentWeather.value = response
-                _error.value = ""
             } catch (e: Exception) {
                 _error.value = "Failed to get weather data: ${e.message}"
             } finally {
@@ -51,10 +51,10 @@ class WeatherViewModel : ViewModel() {
     fun fetchForecastWeather(location: String) {
         viewModelScope.launch {
             _isLoading.value = true
+            _error.value = ""
             try {
                 val response = weatherApiService.getForecastWeather(API_KEY, location, 10)
                 _forecastWeather.value = response.forecast.forecastday.drop(1)
-                _error.value = ""
             } catch (e: Exception) {
                 _error.value = "Failed to get forecast data: ${e.message}"
             } finally {
@@ -73,14 +73,17 @@ class WeatherViewModel : ViewModel() {
         }
 
         searchJob = viewModelScope.launch {
-            delay(300)
-
-            _isSearching.value = true
             try {
+                // Add delay to avoid too many API calls
+                delay(300)
+
+                _isSearching.value = true
                 val suggestions = weatherApiService.searchLocations(API_KEY, query)
                 _searchSuggestions.value = suggestions
             } catch (e: Exception) {
+                // Don't show error for search, just clear suggestions
                 _searchSuggestions.value = emptyList()
+                println("Search error: ${e.message}") // For debugging
             } finally {
                 _isSearching.value = false
             }
@@ -90,5 +93,6 @@ class WeatherViewModel : ViewModel() {
     fun clearSearchSuggestions() {
         _searchSuggestions.value = emptyList()
         searchJob?.cancel()
+        _isSearching.value = false
     }
 }

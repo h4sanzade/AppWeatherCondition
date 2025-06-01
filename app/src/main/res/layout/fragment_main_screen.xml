@@ -103,43 +103,64 @@
         android:layout_marginTop="20dp"
         android:layout_marginBottom="80dp" />
 
-    <TextView
-        android:id="@+id/locationTextView"
-        android:layout_width="wrap_content"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/weatherContentContainer"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Baku, Azerbaijan"
-        android:textSize="28sp"
-        android:textColor="@android:color/white"
-        android:textStyle="bold"
-        android:gravity="center"
-        android:shadowColor="@android:color/black"
-        android:shadowDx="2"
-        android:shadowDy="2"
-        android:shadowRadius="4"
         app:layout_constraintTop_toTopOf="@id/cloudImageView"
+        app:layout_constraintBottom_toBottomOf="@id/cloudImageView"
         app:layout_constraintStart_toStartOf="@id/cloudImageView"
-        app:layout_constraintEnd_toEndOf="@id/cloudImageView"
-        app:layout_constraintBottom_toTopOf="@id/weatherTextView"
-        app:layout_constraintVertical_chainStyle="packed"
-        android:layout_marginBottom="16dp" />
+        app:layout_constraintEnd_toEndOf="@id/cloudImageView">
 
-    <TextView
-        android:id="@+id/weatherTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="25°C\nPartly Cloudy"
-        android:textSize="24sp"
-        android:textColor="@android:color/white"
-        android:gravity="center"
-        android:lineSpacingExtra="8dp"
-        android:shadowColor="@android:color/black"
-        android:shadowDx="2"
-        android:shadowDy="2"
-        android:shadowRadius="4"
-        app:layout_constraintTop_toBottomOf="@id/locationTextView"
-        app:layout_constraintStart_toStartOf="@id/cloudImageView"
-        app:layout_constraintEnd_toEndOf="@id/cloudImageView"
-        app:layout_constraintBottom_toBottomOf="@id/cloudImageView" />
+        <TextView
+            android:id="@+id/locationTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Baku, Azerbaijan"
+            android:textSize="28sp"
+            android:textColor="@android:color/white"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:shadowColor="@android:color/black"
+            android:shadowDx="2"
+            android:shadowDy="2"
+            android:shadowRadius="4"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <ImageView
+            android:id="@+id/weatherIconImageView"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_marginTop="16dp"
+            android:contentDescription="Weather Icon"
+            android:scaleType="centerCrop"
+            app:layout_constraintTop_toBottomOf="@id/locationTextView"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:src="@drawable/ic_cloud_placeholder" />
+
+        <TextView
+            android:id="@+id/weatherTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="25°C\nPartly Cloudy"
+            android:textSize="24sp"
+            android:textColor="@android:color/white"
+            android:gravity="center"
+            android:lineSpacingExtra="8dp"
+            android:shadowColor="@android:color/black"
+            android:shadowDx="2"
+            android:shadowDy="2"
+            android:shadowRadius="4"
+            app:layout_constraintTop_toBottomOf="@id/weatherIconImageView"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/goToListButton"

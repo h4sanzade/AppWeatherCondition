@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.materialdesign.weatherapp.databinding.ItemForecastBinding
 import java.text.SimpleDateFormat
 import java.util.*
@@ -33,6 +34,23 @@ class ForecastAdapter : ListAdapter<ForecastDay, ForecastAdapter.ForecastViewHol
 
             binding.textDay.text = dayName
             binding.textTemp.text = tempRange
+
+            // Load weather icon
+            loadWeatherIcon(forecastDay.day.condition.icon)
+        }
+
+        private fun loadWeatherIcon(iconUrl: String) {
+            val fullIconUrl = if (iconUrl.startsWith("//")) {
+                "https:$iconUrl"
+            } else {
+                iconUrl
+            }
+
+            Glide.with(binding.root.context)
+                .load(fullIconUrl)
+                .placeholder(R.drawable.ic_cloud_placeholder)
+                .error(R.drawable.ic_cloud_placeholder)
+                .into(binding.weatherIcon)
         }
 
         private fun getDayName(dateString: String): String {

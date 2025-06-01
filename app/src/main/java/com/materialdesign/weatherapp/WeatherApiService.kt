@@ -1,5 +1,6 @@
 package com.materialdesign.weatherapp
 
+import com.materialdesign.weatherapp.SearchSuggestion.SearchSuggestion
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -16,4 +17,10 @@ interface WeatherApiService {
         @Query("q") location: String,
         @Query("days") days: Int
     ): ForecastResponse
+
+    @GET("search.json")
+    suspend fun searchLocations(
+        @Query("key") apiKey: String,
+        @Query("q") query: String
+    ): List<SearchSuggestion>
 }

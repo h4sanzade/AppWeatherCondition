@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -20,7 +21,7 @@ class MainScreenFragment : Fragment() {
 
     private val viewModel: WeatherViewModel by viewModels()
     private lateinit var suggestionsAdapter: SearchSuggestionsAdapter
-    private var currentLocation: String = "Baku" // Default location
+    private var currentLocation: String = "Baku"
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -39,18 +40,19 @@ class MainScreenFragment : Fragment() {
         setupSearchFunctionality()
         observeViewModel()
 
-        // Load default location weather
+
         viewModel.fetchCurrentWeather(currentLocation)
     }
 
     private fun setupSearchSuggestionsList() {
         suggestionsAdapter = SearchSuggestionsAdapter { suggestion ->
-            // When a suggestion is clicked
+
             currentLocation = suggestion.name
             binding.searchEditText.setText(suggestion.getDisplayText())
             binding.searchEditText.clearFocus()
             hideSuggestions()
             viewModel.fetchCurrentWeather(suggestion.name)
+            viewModel.clearSearchSuggestions()
         }
 
         binding.suggestionsRecyclerView.apply {
@@ -62,7 +64,6 @@ class MainScreenFragment : Fragment() {
     private fun setupClickListeners() {
         binding.goToListButton.setOnClickListener {
             try {
-                // Pass current location to the next fragment
                 val bundle = Bundle().apply {
                     putString("location", currentLocation)
                 }
@@ -72,7 +73,6 @@ class MainScreenFragment : Fragment() {
             }
         }
 
-        // Hide suggestions when clicking outside
         binding.root.setOnClickListener {
             hideSuggestions()
             binding.searchEditText.clearFocus()
@@ -87,18 +87,19 @@ class MainScreenFragment : Fragment() {
                 viewModel.fetchCurrentWeather(searchQuery)
                 binding.searchEditText.clearFocus()
                 hideSuggestions()
+                viewModel.clearSearchSuggestions()
             } else {
                 Toast.makeText(context, "Please enter a location", Toast.LENGTH_SHORT).show()
             }
         }
 
-        // Handle search on Enter key press
+
         binding.searchEditText.setOnEditorActionListener { _, _, _ ->
             binding.searchButton.performClick()
             true
         }
 
-        // Add TextWatcher for real-time search suggestions
+
         binding.searchEditText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
@@ -106,7 +107,6 @@ class MainScreenFragment : Fragment() {
                 val query = s.toString().trim()
                 if (query.length >= 2) {
                     viewModel.searchLocations(query)
-                    showSuggestions()
                 } else {
                     viewModel.clearSearchSuggestions()
                     hideSuggestions()
@@ -116,12 +116,12 @@ class MainScreenFragment : Fragment() {
             override fun afterTextChanged(s: Editable?) {}
         })
 
-        // Show suggestions when EditText gets focus
         binding.searchEditText.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus && binding.searchEditText.text.toString().length >= 2) {
-                showSuggestions()
+                if (suggestionsAdapter.itemCount > 0) {
+                    showSuggestions()
+                }
             } else if (!hasFocus) {
-                // Add small delay to allow clicking on suggestions
                 binding.root.postDelayed({
                     hideSuggestions()
                 }, 150)
@@ -138,18 +138,18 @@ class MainScreenFragment : Fragment() {
             suggestionsAdapter.submitList(suggestions)
             if (suggestions.isNotEmpty() && binding.searchEditText.hasFocus()) {
                 showSuggestions()
-            } else if (suggestions.isEmpty()) {
+            } else {
                 hideSuggestions()
             }
         }
 
         viewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
-            binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+            binding.progressBar.isVisible = isLoading
             binding.searchButton.isEnabled = !isLoading
         }
 
         viewModel.isSearching.observe(viewLifecycleOwner) { isSearching ->
-            binding.searchProgressBar.visibility = if (isSearching) View.VISIBLE else View.GONE
+            binding.searchProgressBar.isVisible = isSearching
         }
 
         viewModel.error.observe(viewLifecycleOwner) { error ->
@@ -174,7 +174,6 @@ class MainScreenFragment : Fragment() {
         binding.locationTextView.text = locationText
         binding.weatherTextView.text = weatherText
 
-        // Update current location for future use
         currentLocation = weatherResponse.location.name
     }
 
