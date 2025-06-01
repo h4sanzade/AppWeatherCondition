@@ -4,6 +4,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.materialdesign.weatherapp.SearchSuggestion.SearchSuggestion
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class WeatherViewModel : ViewModel() {
@@ -16,11 +19,19 @@ class WeatherViewModel : ViewModel() {
     private val _forecastWeather = MutableLiveData<List<ForecastDay>>()
     val forecastWeather: LiveData<List<ForecastDay>> = _forecastWeather
 
+    private val _searchSuggestions = MutableLiveData<List<SearchSuggestion>>()
+    val searchSuggestions: LiveData<List<SearchSuggestion>> = _searchSuggestions
+
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> = _isLoading
 
+    private val _isSearching = MutableLiveData<Boolean>()
+    val isSearching: LiveData<Boolean> = _isSearching
+
     private val _error = MutableLiveData<String>()
     val error: LiveData<String> = _error
+
+    private var searchJob: Job? = null
 
     fun fetchCurrentWeather(location: String) {
         viewModelScope.launch {
@@ -42,7 +53,6 @@ class WeatherViewModel : ViewModel() {
             _isLoading.value = true
             try {
                 val response = weatherApiService.getForecastWeather(API_KEY, location, 10)
-
                 _forecastWeather.value = response.forecast.forecastday.drop(1)
                 _error.value = ""
             } catch (e: Exception) {
@@ -51,5 +61,34 @@ class WeatherViewModel : ViewModel() {
                 _isLoading.value = false
             }
         }
+    }
+
+    fun searchLocations(query: String) {
+        // Cancel previous search job
+        searchJob?.cancel()
+
+        if (query.length < 2) {
+            _searchSuggestions.value = emptyList()
+            return
+        }
+
+        searchJob = viewModelScope.launch {
+            delay(300)
+
+            _isSearching.value = true
+            try {
+                val suggestions = weatherApiService.searchLocations(API_KEY, query)
+                _searchSuggestions.value = suggestions
+            } catch (e: Exception) {
+                _searchSuggestions.value = emptyList()
+            } finally {
+                _isSearching.value = false
+            }
+        }
+    }
+
+    fun clearSearchSuggestions() {
+        _searchSuggestions.value = emptyList()
+        searchJob?.cancel()
     }
 }
