@@ -16,6 +16,7 @@ class MainScreenFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val viewModel: WeatherViewModel by viewModels()
+    private var currentLocation: String = "Baku"
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -30,18 +31,45 @@ class MainScreenFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         setupClickListeners()
+        setupSearchFunctionality()
         observeViewModel()
 
-        viewModel.fetchCurrentWeather("Baku")
+
+        viewModel.fetchCurrentWeather(currentLocation)
     }
 
     private fun setupClickListeners() {
         binding.goToListButton.setOnClickListener {
             try {
-                findNavController().navigate(R.id.action_main_to_week)
+
+                val bundle = Bundle().apply {
+                    putString("location", currentLocation)
+                }
+                findNavController().navigate(R.id.action_main_to_week, bundle)
             } catch (e: Exception) {
                 Toast.makeText(context, "Navigation error: ${e.message}", Toast.LENGTH_SHORT).show()
             }
+        }
+    }
+
+    private fun setupSearchFunctionality() {
+        binding.searchButton.setOnClickListener {
+            val searchQuery = binding.searchEditText.text.toString().trim()
+            if (searchQuery.isNotEmpty()) {
+                currentLocation = searchQuery
+                viewModel.fetchCurrentWeather(searchQuery)
+                binding.searchEditText.text.clear()
+
+                binding.searchEditText.clearFocus()
+            } else {
+                Toast.makeText(context, "Please enter a location", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+
+        binding.searchEditText.setOnEditorActionListener { _, _, _ ->
+            binding.searchButton.performClick()
+            true
         }
     }
 
@@ -52,6 +80,7 @@ class MainScreenFragment : Fragment() {
 
         viewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
             binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+            binding.searchButton.isEnabled = !isLoading
         }
 
         viewModel.error.observe(viewLifecycleOwner) { error ->
@@ -67,6 +96,9 @@ class MainScreenFragment : Fragment() {
 
         binding.locationTextView.text = locationText
         binding.weatherTextView.text = weatherText
+
+
+        currentLocation = weatherResponse.location.name
     }
 
     private fun showError(message: String) {

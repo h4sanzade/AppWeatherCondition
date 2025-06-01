@@ -17,6 +17,7 @@ class ConditionWeekFragment : Fragment() {
 
     private val viewModel: WeatherViewModel by viewModels()
     private lateinit var forecastAdapter: ForecastAdapter
+    private var currentLocation: String = "Baku"
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -30,11 +31,15 @@ class ConditionWeekFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+
+        currentLocation = arguments?.getString("location") ?: "Baku"
+
         setupRecyclerView()
         observeViewModel()
 
-        viewModel.fetchCurrentWeather("Baku")
-        viewModel.fetchForecastWeather("Baku")
+
+        viewModel.fetchCurrentWeather(currentLocation)
+        viewModel.fetchForecastWeather(currentLocation)
     }
 
     private fun setupRecyclerView() {
